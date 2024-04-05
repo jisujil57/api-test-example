@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.*;
 
 public class ReqresTest {
     @Test
-    @DisplayName("Проверка получения пользователей")
-    void getUserTest() {
+    @DisplayName("Проверка получения списка пользователей")
+    void getUsersTest() {
         String getUsersRequestBody = "{ \"pageNumber\": \"2\" }";
 
         given()
