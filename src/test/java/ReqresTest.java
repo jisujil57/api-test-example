@@ -1,4 +1,6 @@
+import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -6,6 +8,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 public class ReqresTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        RestAssured.baseURI = System.getProperty("baseUrl", "https://reqres.in");
+        RestAssured.basePath = "/api";
+    }
+
     @Test
     @DisplayName("Проверка получения списка пользователей")
     void getUsersTest() {
@@ -14,7 +23,6 @@ public class ReqresTest {
         given()
                 .log().uri()
                 .log().method()
-                .baseUri(Endpoints.BASE_URL)
                 .accept(ContentType.JSON)
                 .body(getUsersRequestBody)
                 .when()
@@ -38,7 +46,6 @@ public class ReqresTest {
         given()
                 .log().uri()
                 .log().method()
-                .baseUri(Endpoints.BASE_URL)
                 .contentType(ContentType.JSON)
                 .body(registerUserRequestBody)
                 .when()
@@ -56,7 +63,6 @@ public class ReqresTest {
         given()
                 .log().uri()
                 .log().method()
-                .baseUri(Endpoints.BASE_URL)
                 .when()
                 .get(Endpoints.USER_INFO_ENDPOINT)
                 .then()
@@ -74,7 +80,6 @@ public class ReqresTest {
         given()
                 .log().uri()
                 .log().method()
-                .baseUri(Endpoints.BASE_URL)
                 .when()
                 .delete(Endpoints.USER_INFO_ENDPOINT)
                 .then()
@@ -88,7 +93,6 @@ public class ReqresTest {
         given()
                 .log().uri()
                 .log().method()
-                .baseUri(Endpoints.BASE_URL)
                 .when()
                 .get(Endpoints.UNKNOWN_ENDPOINT)
                 .then()
