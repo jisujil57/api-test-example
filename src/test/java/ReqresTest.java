@@ -1,110 +1,111 @@
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.junit.jupiter.api.BeforeAll;
+import modeles.RegisterRequestBody;
+import modeles.RegisterResponseBody;
+import modeles.UnknownDataResponse;
+import modeles.UserDataResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static specs.Specifications.*;
 
 public class ReqresTest {
 
-    @BeforeAll
-    static void beforeAll() {
-        RestAssured.baseURI = System.getProperty("baseUrl", "https://reqres.in");
-        RestAssured.basePath = "/api";
-    }
-
     @Test
     @DisplayName("Проверка получения списка пользователей")
-    void getUsersTest() {
-        String getUsersRequestBody = "{ \"pageNumber\": \"2\" }";
-
-        given()
-                .log().uri()
-                .log().method()
-                .accept(ContentType.JSON)
-                .body(getUsersRequestBody)
+    void getUsersTest2() {
+        List<UserDataResponse> userDataResponses = given(requestSpec)
+                .queryParam("page", 2)
                 .when()
                 .get(Endpoints.USERS_ENDPOINT)
                 .then()
-                .log().all()
-                .statusCode(200)
-                .time(lessThan(600L))
-                .body("total", is(12))
-                .body("data.email", hasItems(endsWith("@reqres.in")))
-                .body("data.avatar", hasItems(startsWith("https://reqres.in/img/faces/")))
-                .body("data", hasSize(6))
-                .body("data", notNullValue());
+                .spec(responseSpecOk200)
+                .assertThat()
+                .extract().jsonPath().getList("data", UserDataResponse.class);
+
+        assertFalse(userDataResponses.isEmpty());
+        assertEquals(6, userDataResponses.size());
+
+        for (UserDataResponse userData : userDataResponses) {
+            assertTrue(userData.getId() > 0);
+            assertThat(userData.getEmail(), endsWith("@reqres.in"));
+            assertNotNull(userData.getFirst_name());
+            assertNotNull(userData.getLast_name());
+            assertThat(userData.getAvatar(), startsWith("https://reqres.in/img/faces/"));
+
+        }
     }
 
     @Test
     @DisplayName("Регистрация нового пользователя")
     void registerUserTest() {
-        String registerUserRequestBody = "{ \"email\": \"eve.holt@reqres.in\", \"password\": \"pistol\" }";
+        RegisterRequestBody registerUserRequestBody = RegisterRequestBody.builder()
+                .email("eve.holt@reqres.in")
+                .password("pistol")
+                .build();
 
-        given()
-                .log().uri()
-                .log().method()
-                .contentType(ContentType.JSON)
+        RegisterResponseBody registerResponseBody = given(requestSpec)
                 .body(registerUserRequestBody)
                 .when()
                 .post(Endpoints.REGISTER_ENDPOINT)
                 .then()
-                .log().all()
-                .statusCode(200)
-                .body("id", is(4))
-                .body("token", is("QpwL5tke4Pnpja7X4"));
+                .spec(responseSpecOk200)
+                .extract().body().as(RegisterResponseBody.class);
+
+        assertEquals(4, registerResponseBody.getId());
+        assertNotNull(registerResponseBody.getToken());
     }
 
     @Test
     @DisplayName("Получение информации о пользователе с ID 2")
     void getUserInfoTest() {
-        given()
-                .log().uri()
-                .log().method()
+        UserDataResponse userDataResponse = given(requestSpec)
                 .when()
                 .get(Endpoints.USER_INFO_ENDPOINT)
                 .then()
-                .log().all()
-                .statusCode(200)
-                .body("data.email", is("janet.weaver@reqres.in"))
-                .body("data.first_name", is("Janet"))
-                .body("data.last_name", is("Weaver"))
-                .body("data.id", notNullValue());
+                .spec(responseSpecOk200)
+                .extract().jsonPath().getObject("data", UserDataResponse.class);
+
+        assertEquals(2, userDataResponse.getId());
+        assertEquals("janet.weaver@reqres.in", userDataResponse.getEmail());
+        assertEquals("Janet", userDataResponse.getFirst_name());
+        assertEquals("Weaver", userDataResponse.getLast_name());
+        assertEquals("https://reqres.in/img/faces/2-image.jpg", userDataResponse.getAvatar());
     }
 
     @Test
     @DisplayName("Удаление пользователя с ID 2")
     void deleteUserTest() {
-        given()
-                .log().uri()
-                .log().method()
+        given(requestSpec)
                 .when()
                 .delete(Endpoints.USER_INFO_ENDPOINT)
                 .then()
-                .log().all()
-                .statusCode(204);
+                .spec(responseSpecNoContent204);
     }
 
     @Test
     @DisplayName("Получение информации о неизвестных объектах")
     void getUnknownObjectsTest() {
-        given()
-                .log().uri()
-                .log().method()
+        List<UnknownDataResponse> unknownDataResponse = given(requestSpec)
                 .when()
                 .get(Endpoints.UNKNOWN_ENDPOINT)
                 .then()
-                .log().all()
-                .statusCode(200)
-                .body("page", is(1))
-                .body("per_page", is(6))
-                .body("total", is(12))
-                .body("total_pages", is(2))
-                .body("data", hasSize(6))
-                .body("support.url", equalTo("https://reqres.in/#support-heading"))
-                .body("support.text",
-                        equalTo("To keep ReqRes free, contributions towards server costs are appreciated!"));
+                .spec(responseSpecOk200)
+                .extract().jsonPath().getList("data", UnknownDataResponse.class);
+
+        assertFalse(unknownDataResponse.isEmpty());
+        assertEquals(6, unknownDataResponse.size());
+
+        for (UnknownDataResponse unknownData : unknownDataResponse) {
+            assertTrue(unknownData.getId() > 0);
+            assertNotNull(unknownData.getName());
+            assertTrue(unknownData.getYear() > 1995);
+            assertNotNull(unknownData.getColor());
+            assertNotNull(unknownData.getPantone_value());
+        }
     }
 }
