@@ -1,12 +1,10 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.0.9/tailwind.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/atom-one-light.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <style>
         body {
@@ -27,12 +25,13 @@ border-radius: 8px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 overflow: hidden;
 margin-bottom: 20px;
-max-width: 70%;
 height: auto;
+margin-left: 20%;
+margin-right: 20%;
 }
 
 .card-header {
-background-color: #2196F3;
+background: linear-gradient(163deg, #1f8bdf 0%, #209fdb 100%);
 color: #fff;
 padding: 10px 15px;
 border-top-left-radius: 8px;
@@ -46,13 +45,23 @@ background-color: #fff;
 height: auto;
 }
 
+pre code.hljs {
+padding: 16px;
+}
+
 pre code {
 white-space: pre-wrap;
+padding: 16px;
+}
+
+pre {
+white-space: pre-wrap;
+margin: 6px 0px;
 }
 
 h5 {
-margin-block-start: 10px;
-margin-block-end: 10px;
+margin-block-start: 2px;
+margin-block-end: 2px;
 }
 </style>
 </head>
@@ -87,7 +96,7 @@ margin-block-end: 10px;
                 <div class="card-body">
                     <#list data.headers as name, value>
                         <div>
-                            <pre><code class="hljs"><b>${name}</b>: ${value}</code></pre>
+                            <pre><code class="hljs">${name}: ${value}</code></pre>
                         </div>
                     </#list>
                 </div>
@@ -102,7 +111,7 @@ margin-block-end: 10px;
                 <div class="card-body">
                     <#list data.cookies as name, value>
                         <div>
-                            <pre><code class="hljs"><b>${name}</b>: ${value}</code></pre>
+                            <pre><code class="hljs">${name}: ${value}</code></pre>
                         </div>
                     </#list>
                 </div>
