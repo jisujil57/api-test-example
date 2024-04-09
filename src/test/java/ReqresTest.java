@@ -15,12 +15,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static specs.Specifications.*;
 
+@DisplayName("Api тесты на сервис https://reqres.in")
 public class ReqresTest {
 
     @Test
     @DisplayName("Получение списка пользователей")
     void getUsersTest2() {
-        List<UserDataResponse> userDataResponses = step("Выполнение запроса на получение списка пользователей", () ->
+        List<UserDataResponse> userDataResponses = step("Получение списка пользователей", () ->
                 given(requestSpec)
                         .queryParam("page", 2)
                         .when()
@@ -55,7 +56,7 @@ public class ReqresTest {
                 .password("pistol")
                 .build();
 
-        RegisterResponseBody registerResponseBody = step("Выполнение запроса на регистрацию нового пользователя", () ->
+        RegisterResponseBody registerResponseBody = step("Регистрация нового пользователя", () ->
                 given(requestSpec)
                         .body(registerUserRequestBody)
                         .when()
@@ -75,7 +76,7 @@ public class ReqresTest {
     @Test
     @DisplayName("Получение информации о пользователе с ID 2")
     void getUserInfoTest() {
-        UserDataResponse userDataResponse = step("Выполнение запроса на получение информации о пользователе с ID 2", () ->
+        UserDataResponse userDataResponse = step("Получение информации о пользователе с ID 2", () ->
                 given(requestSpec)
                         .when()
                         .get(Endpoints.USER_INFO_ENDPOINT)
@@ -108,7 +109,7 @@ public class ReqresTest {
     @Test
     @DisplayName("Получение информации о неизвестных объектах")
     void getUnknownObjectsTest() {
-        List<UnknownDataResponse> unknownDataResponse = step("Выполнение запроса на получение информации о неизвестных объектах", () ->
+        List<UnknownDataResponse> unknownDataResponse = step("Получение информации о неизвестных объектах", () ->
                 given(requestSpec)
                         .when()
                         .get(Endpoints.UNKNOWN_ENDPOINT)
