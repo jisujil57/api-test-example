@@ -12,6 +12,10 @@ import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.lessThan;
 
 public class Specifications {
+        private static final long MAX_RESPONSE_TIME = 2000L;
+        private static final String BASE_URL = System.getProperty("baseUrl", "https://reqres.in");
+        private static final String BASE_PATH = "/api";
+
         public static RequestSpecification requestSpec = with()
                 .filter(withCustomTemplates())
                 .log().uri()
@@ -19,19 +23,19 @@ public class Specifications {
                 .log().body()
                 .log().headers()
                 .contentType(JSON)
-                .baseUri(System.getProperty("baseUrl", "https://reqres.in"))
-                .basePath("/api");
+                .baseUri(BASE_URL)
+                .basePath(BASE_PATH);
 
         public static ResponseSpecification responseSpecOk200 = new ResponseSpecBuilder()
                 .expectStatusCode(200)
-                .expectResponseTime(lessThan(2000L))
+                .expectResponseTime(lessThan(MAX_RESPONSE_TIME))
                 .log(STATUS)
                 .log(BODY)
                 .build();
 
         public static ResponseSpecification responseSpecNoContent204 = new ResponseSpecBuilder()
                 .expectStatusCode(204)
-                .expectResponseTime(lessThan(2000L))
+                .expectResponseTime(lessThan(MAX_RESPONSE_TIME))
                 .log(STATUS)
                 .log(BODY)
                 .build();
