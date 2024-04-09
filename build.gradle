@@ -36,7 +36,8 @@ dependencies {
             "io.rest-assured:json-schema-validator:$restAssuredVersion",
             "io.qameta.allure:allure-rest-assured:$allureVersion",
             "org.junit.jupiter:junit-jupiter:$junitVersion",
-            "org.slf4j:slf4j-simple:$slf4jVersion"
+            "org.slf4j:slf4j-simple:$slf4jVersion",
+            "org.aspectj:aspectjrt:1.9.7"
     )
 }
 
